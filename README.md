@@ -1,4 +1,4 @@
-# Python Simple Website
+# Python Simple website
 
 This Repo should help you to get a simple Python website setup using the Flask framework. This is a great first project for new programmers.
 
