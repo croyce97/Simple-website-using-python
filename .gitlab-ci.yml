@@ -1,0 +1,32 @@
+stages:
+  - install
+  - test
+  - deploy
+
+# Job 1: Cài thư viện cần thiết (Flask)
+install-deps:
+  stage: install
+  image: python:3.10
+  script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install flask
+  artifacts:
+    paths:
+      - venv
+
+# Job 2: Kiểm tra file có chạy không (chưa cần test unit)
+test-run:
+  stage: test
+  image: python:3.10
+  script:
+    - source venv/bin/activate
+    - python -m py_compile app.py
+  dependencies:
+    - install-deps
+
+# Job 3: Giả lập bước deploy (placeholder)
+deploy-placeholder:
+  stage: deploy
+  script:
+    - echo "Ứng dụng đã sẵn sàng deploy!"
