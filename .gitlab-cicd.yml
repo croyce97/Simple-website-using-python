@@ -3,7 +3,6 @@ stages:
   - test
   - deploy
 
-# Job 1: Cài thư viện cần thiết (Flask)
 install-deps:
   stage: install
   image: python:3.10
@@ -14,8 +13,10 @@ install-deps:
   artifacts:
     paths:
       - venv
+  rules:
+    - changes: ["*", "!README.md"]
+    - when: never
 
-# Job 2: Kiểm tra file có chạy không (chưa cần test unit)
 test-run:
   stage: test
   image: python:3.10
@@ -24,9 +25,14 @@ test-run:
     - python -m py_compile app.py
   dependencies:
     - install-deps
+  rules:
+    - changes: ["*", "!README.md"]
+    - when: never
 
-# Job 3: Giả lập bước deploy (placeholder)
 deploy-placeholder:
   stage: deploy
   script:
     - echo "Ứng dụng đã sẵn sàng deploy!"
+  rules:
+    - changes: ["*", "!README.md"]
+    - when: never
