@@ -1,4 +1,4 @@
-from flask import * #importing flask (Install it using python -m pip install flask)
+from flask import * #importing flask (Install it using python  -m pip install flask)
 
 
 app = Flask(__name__) #initialising flask
