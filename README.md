@@ -2,6 +2,8 @@
 
 This Repo should help you to get a simple Python website setup using the Flask framework. This is a great first project for new programmers.
 
+I (croyce97) reuse this project for learning CI/CD on Gitlab: https://gitlab.com/canh05104/simple-python-ci
+
 ## To-Do
 - ### Preparing for the Project
   - [x] First ensure Python is installed 
