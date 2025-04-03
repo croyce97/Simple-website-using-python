@@ -1,6 +1,7 @@
 stages:
   - install
   - test
+  - build
   - deploy
 
 install-deps:
@@ -13,9 +14,6 @@ install-deps:
   artifacts:
     paths:
       - venv
-  rules:
-    - changes: ["*", "!README.md"]
-    - when: never
 
 test-run:
   stage: test
@@ -25,14 +23,30 @@ test-run:
     - python -m py_compile app.py
   dependencies:
     - install-deps
-  rules:
-    - changes: ["*", "!README.md"]
-    - when: never
 
-deploy-placeholder:
-  stage: deploy
+build-docker-image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   script:
-    - echo "Ứng dụng đã sẵn sàng deploy!"
-  rules:
-    - changes: ["*", "!README.md"]
-    - when: never
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWD"
+    - docker build -t my-flask-app .
+    - docker tag my-flask-app "$DOCKER_USER/my-flask-app:latest"
+    - docker push "$DOCKER_USER/my-flask-app:latest"
+
+
+deploy:
+  stage: deploy
+  before_script:
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > key.pem
+    - chmod 400 key.pem
+  script:
+    - ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "
+        docker pull $DOCKER_USER/my-flask-app:latest &&
+        docker stop my-flask-app || true &&
+        docker rm my-flask-app || true &&
+        docker run -d --name my-flask-app -p 4949:4949 $DOCKER_USER/my-flask-app:latest
